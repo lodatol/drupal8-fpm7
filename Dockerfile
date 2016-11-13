@@ -7,7 +7,9 @@ RUN apt-get update && apt-get install -y \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
         libpng12-dev \
-        libpq-dev \ 
+        libpq-dev \
+        sqlite \
+        mysql-client \ 
     && docker-php-ext-install -j$(nproc) iconv mcrypt \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr  --with-png-dir=/usr \
     && docker-php-ext-install -j$(nproc) gd mbstring opcache pdo pdo_mysql pdo_pgsql zip
@@ -25,7 +27,7 @@ composer global require drush/drush:~8
 RUN echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> ~/.bashrc
 
 #needed by drush
-RUN apt-get install -y sqlite mysql-client wget git 
+RUN apt-get install -y wget git 
 
 #addind uploadprogress
 ADD pecl-php-uploadprogress pecl-php-uploadprogress
