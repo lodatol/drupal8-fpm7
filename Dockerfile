@@ -1,4 +1,5 @@
 FROM php:7-fpm
+MAINTAINER lodatoluciano@gmail.com
 
 RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
@@ -11,6 +12,10 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr  --with-png-dir=/usr \
     && docker-php-ext-install -j$(nproc) gd mbstring opcache pdo pdo_mysql pdo_pgsql zip
 
+COPY php-drupal8-configs /usr/local/etc/php/conf.d
+
+WORKDIR /tmp
+
 RUN \
 curl -sS https://getcomposer.org/installer | php && \
 mv composer.phar /usr/local/bin/composer && \
@@ -22,3 +27,9 @@ RUN echo 'export PATH="$HOME/.composer/vendor/bin:$PATH"' >> ~/.bashrc
 #needed by drush
 RUN apt-get install -y sqlite mysql-client wget git 
 
+#addind uploadprogress
+ADD pecl-php-uploadprogress pecl-php-uploadprogress
+WORKDIR pecl-php-uploadprogress
+RUN pecl install package.xml && echo "extension=uploadprogress.so" >> /usr/local/etc/php/conf.d/uploadprogress.ini
+
+WORKDIR /var/www/html/
